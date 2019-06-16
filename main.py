@@ -18,7 +18,8 @@ from functions import ReturnWhenObjectWithinXcm
 # --------------------------------------------------------------------------------
 #  Launch an individual step.
 #
-#  Launches an individual stepThe details of the 'process' node are quired to determine what step to launch.
+#  Launches an individual step as a new thread. The details of the 'process' node 
+#  are queried to determine what step to launch and what parameters are passed.
 #  
 # 
 #  Parameters:      
@@ -26,6 +27,10 @@ from functions import ReturnWhenObjectWithinXcm
 #  debug        - If in debug mode, details will be printed to the console.
 #  stop         - Should the process be stopped?
 #  action       - JSON process node.  
+#
+#  Returns:
+#  
+#  thread       - Reference to the newly created thread. 
 #
 # --------------------------------------------------------------------------------
 
@@ -87,6 +92,28 @@ def launchStep(debug, stop, action):
         thread.start()
         return thread
 
+
+# --------------------------------------------------------------------------------
+#  Launch an set of related steps.
+#
+#  Launches a set of related steps as individual threads hosted inside a single 
+#  thread.  Where actions are nominated to run in parallel, the process continues
+#  until all actions are completed.  Where actions are nominated to run serially
+#  they are started one after the other.
+# 
+#  Parameters:      
+#
+#  debug        - If in debug mode, details will be printed to the console.
+#  stop         - Should the process be stopped?
+#  actions      - JSON action node or nodes.  
+#  inParallel   - Where more than one action is specified, should we launch
+#                 the actions in parallel or serial?  Default is in parallel.
+#
+#  Returns:
+#  
+#  thread       - Reference to the newly created thread. 
+#
+# --------------------------------------------------------------------------------
     
 def launchSteps(debug, stop, actions, inParallel = True):
 
@@ -98,7 +125,9 @@ def launchSteps(debug, stop, actions, inParallel = True):
     stop_threads = False
     
 
-    # Launch the process(es) for this step.  If the 
+    # Launch the process(es) for this step.  If the step contains sub-steps, then
+    # we handle these differently to a single step ..
+
     if 'steps' in actions:
 
         if inParallel:
@@ -114,6 +143,8 @@ def launchSteps(debug, stop, actions, inParallel = True):
             threadPoolCount = threadPoolCount + 1
 
 
+    # The step is a single action ..
+
     if 'steps' not in actions:
 
         newThread = launchStep(debug, stop, actions)
@@ -124,7 +155,13 @@ def launchSteps(debug, stop, actions, inParallel = True):
     threadPoolTotalCount = threadPoolCount
     allThreadsCompleted = False
 
+
+    # Query the threads repeatedly to see if any have completed ..
+
     while not allThreadsCompleted:
+
+
+        # Loop through the threads and remove finished ones from the thread pool ..
 
         for worker in threadPool:
             if not worker.isAlive():
@@ -152,11 +189,26 @@ def launchSteps(debug, stop, actions, inParallel = True):
                 allThreadsCompleted = True
         
         sleep (0.01) # Give the CPU a rest
-        print("a", file=stderr)
+        #print("a", file=stderr)
 
-    for thread in threadPool:
-        thread.join()
+        for thread in threadPool:
+            thread.join()
 
+
+# --------------------------------------------------------------------------------
+#  Has the robot been lifted off the table?
+# 
+#  Parameters:      
+#
+#  debug        - If in debug mode, details will be printed to the console.
+#                 the actions in parallel or serial?  Default is in parallel.
+#
+#  Returns:
+#  
+#  boolean      - True if the robot has been lifted off the table.
+#               - False if the robot is still on the table.
+#
+# --------------------------------------------------------------------------------
 
 def isRobotLifted(debug):
 
@@ -170,6 +222,10 @@ def isRobotLifted(debug):
 
     return lifted
 
+
+# --------------------------------------------------------------------------------
+#  Main routine.
+# --------------------------------------------------------------------------------
 
 def main():
 
@@ -213,7 +269,7 @@ def main():
                 if isRobotLifted(debug):
                     stop_threads = True
                 
-                print("b", file=stderr)
+                #print("b", file=stderr)
                     
             for thread in threadPool:
                 thread.join()
