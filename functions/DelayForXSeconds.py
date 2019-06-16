@@ -9,10 +9,11 @@ import threading
 import time
 import os
 import json
+import constants
 
 def launch(debug, stop, delayLength):
 
-    if debug:
+    if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
         print("Start delayForXSeconds({}), active number of threads {}, thread {}".format(delayLength, threading.activeCount(), threading.current_thread().ident), file=stderr)
 
     start_time = time.time()
@@ -20,11 +21,11 @@ def launch(debug, stop, delayLength):
     while time.time() < start_time + delayLength:
 
         if stop():
-            if debug:
+            if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
                 print("Kill delayForXSeconds({}), thread {}.".format(delayLength, threading.current_thread().ident), file=stderr)
             break
 
     if not stop():
-        if debug:
+        if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
             print("End delayForXSeconds({}), thread {}.".format(delayLength, threading.current_thread().ident), file=stderr)
 

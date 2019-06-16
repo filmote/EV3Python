@@ -9,6 +9,7 @@ import threading
 import time
 import os
 import json
+import constants
 
 from functions import DelayForXSeconds
 from functions import ReturnWhenObjectWithinXcm
@@ -234,7 +235,7 @@ def main():
 
     cl = ColorSensor() 
 
-    debug = True
+    debug = constants.DEBUG | constants.DEBUG_THREAD_LIFECYCLE
 
     with open('data.txt') as json_file:  
     
