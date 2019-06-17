@@ -2,6 +2,7 @@
 from ev3dev2.sensor.lego import TouchSensor, UltrasonicSensor, InfraredSensor
 import ev3dev2.sensor.lego 
 import ev3dev2.led 
+import constants
 
 from sys import stderr
 
@@ -19,7 +20,10 @@ def launch(debug, stop, distance):
 
     while True:
 
-        if ir.proximity < distance:
+        if debug:
+            print(ir.proximity / constants.IR_PROMIXITY_TO_CM_RATIO, file = stderr)
+
+        if ir.proximity < distance * constants.IR_PROMIXITY_TO_CM_RATIO:
             if debug:
                 print("End returnWhenObjectWithinXcm({}).".format(distance, threading.current_thread().ident), file=stderr)
             break

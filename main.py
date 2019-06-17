@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
+
 from ev3dev2.sensor.lego import TouchSensor, UltrasonicSensor, InfraredSensor, ColorSensor
+from ev3dev2.motor import MoveTank, OUTPUT_B, OUTPUT_C
+from ev3dev2.motor import LargeMotor
+from ev3dev2.motor import SpeedDPS, SpeedRPM, SpeedRPS, SpeedDPM
 from ev3dev2.led import Leds
 from ev3dev2.sound import Sound
 from time import sleep
@@ -11,6 +15,7 @@ import os
 import json
 import constants
 
+from functions import DriveForXRotations
 from functions import DelayForXSeconds
 from functions import ReturnWhenObjectWithinXcm
 
@@ -60,6 +65,22 @@ def launchStep(debug, stop, action):
         # Create action ..
 
         thread = threading.Thread(target = launchSteps, args = (debug, stop, action, False))
+        thread.start()
+        return thread
+
+
+    # --------------------------------------------------------------------------------
+
+    if (action['step'] == 'driveForXRotations'):
+
+        # Get all other parameters ..
+
+        rotations = action['rotations']
+        speed = action['speed']
+
+        # Create action ..
+
+        thread = threading.Thread(target = DriveForXRotations.launch, args = (debug, stop, rotations, speed))
         thread.start()
         return thread
 
@@ -192,9 +213,6 @@ def launchSteps(debug, stop, actions, inParallel = True):
         sleep (0.01) # Give the CPU a rest
         #print("a", file=stderr)
 
-        for thread in threadPool:
-            thread.join()
-
 
 # --------------------------------------------------------------------------------
 #  Has the robot been lifted off the table?
@@ -213,9 +231,9 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
 def isRobotLifted(debug):
 
-    MINIMUM_THRESHOLD = 2
+    MINIMUM_THRESHOLD = 10
     cl = ColorSensor() 
-
+    # print(cl.raw, file = stderr)
     lifted = cl.raw[0] < MINIMUM_THRESHOLD and cl.raw[1] < MINIMUM_THRESHOLD and cl.raw[2] < MINIMUM_THRESHOLD
 
     if debug and lifted:
@@ -237,7 +255,7 @@ def main():
 
     debug = constants.DEBUG | constants.DEBUG_THREAD_LIFECYCLE
 
-    with open('data.txt') as json_file:  
+    with open('data.json') as json_file:  
     
         data = json.load(json_file)
 
@@ -271,9 +289,6 @@ def main():
                     stop_threads = True
                 
                 #print("b", file=stderr)
-                    
-            for thread in threadPool:
-                thread.join()
 
             if stop_threads:
                 break
