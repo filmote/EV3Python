@@ -8,6 +8,7 @@ from ev3dev2.led import Leds
 from ev3dev2.sound import Sound
 from time import sleep
 from sys import stderr
+from ast import literal_eval
 
 import threading
 import time
@@ -15,9 +16,11 @@ import os
 import json
 import constants
 
+from utilities import MinimiseJSON
 from functions import DriveForXRotations
 from functions import DelayForXSeconds
 from functions import ReturnWhenObjectWithinXcm
+from functions import WaitUntilKeyPress
 
 
 
@@ -65,6 +68,17 @@ def launchStep(debug, stop, action):
         # Create action ..
 
         thread = threading.Thread(target = launchSteps, args = (debug, stop, action, False))
+        thread.start()
+        return thread
+
+
+    # --------------------------------------------------------------------------------
+
+    if (action['step'] == 'waitUntilKeyPress'):
+
+        # Create action ..
+
+        thread = threading.Thread(target = WaitUntilKeyPress.launch, args = (debug, stop))
         thread.start()
         return thread
 
@@ -231,10 +245,8 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
 def isRobotLifted(debug):
 
-    MINIMUM_THRESHOLD = 10
     cl = ColorSensor() 
-    # print(cl.raw, file = stderr)
-    lifted = cl.raw[0] < MINIMUM_THRESHOLD and cl.raw[1] < MINIMUM_THRESHOLD and cl.raw[2] < MINIMUM_THRESHOLD
+    lifted = cl.raw[0] < constants.LIFTED_MINIMUM_THRESHOLD and cl.raw[1] < constants.LIFTED_MINIMUM_THRESHOLD and cl.raw[2] < constants.LIFTED_MINIMUM_THRESHOLD
 
     if debug and lifted:
         print("Robot lifted.", file = stderr)
@@ -248,51 +260,73 @@ def isRobotLifted(debug):
 
 def main():
 
-    print('Starting Program..', file=stderr)
-    os.system('setfont Lat15-TerminusBold14')
+    cl = ColorSensor()
 
-    cl = ColorSensor() 
+    print('Starting Program..', file=stderr)
+
+
+    # Set up debugging level ..
 
     debug = constants.DEBUG | constants.DEBUG_THREAD_LIFECYCLE
 
-    with open('data.json') as json_file:  
+
+    # Load JSON and strip out comments ..
+
+    programs = MinimiseJSON.minimise("programs.json")
+
     
-        data = json.load(json_file)
+    while True:
+
+        rgb = cl.raw
+
+        for program in programs['programs']:
+
+            rProgram = program['r']
+            gProgram = program['g']
+            bProgram = program['b']
+
+            #print("compare {} to ({}, {}, {})".format(rgb, rProgram, gProgram, bProgram), file=stderr)
+
+            if abs(rgb[0] - rProgram) < constants.COLOUR_TOLERANCE and abs(rgb[1] - gProgram) < constants.COLOUR_TOLERANCE and abs(rgb[2] - bProgram) < constants.COLOUR_TOLERANCE:
+
+                print("Run {} ".format(program["program"]), file = stderr)
+
+                # Load JSON and strip out comments ..
+
+                data = MinimiseJSON.minimise(program['fileName'])
 
 
-        threadPool = []
-        stop_threads = False
+                threadPool = []
+                stop_threads = False
 
+                for process in data['steps']:
 
-        for process in data['steps']:
+                    inParallel = False if process['step'] == 'launchInSerial' else True
+                    thread = threading.Thread(target = launchSteps, args = (debug, lambda: stop_threads, process, inParallel))
+                    threadPool.append(thread)
+                    thread.start()
 
-            inParallel = False if process['step'] == 'launchInSerial' else True
-            thread = threading.Thread(target = launchSteps, args = (debug, lambda: stop_threads, process, inParallel))
-            threadPool.append(thread)
-            thread.start()
+                    allThreadsCompleted = False
 
+                    while not allThreadsCompleted:
 
-        #    while not ts.is_pressed:
-            allThreadsCompleted = False
+                        if isRobotLifted(debug):
+                            stop_threads = True
 
-            while not allThreadsCompleted:
+                        for thread in threadPool:
+                            if not thread.isAlive():
+                                threadPool.remove(thread)
 
-                for thread in threadPool:
-                    if not thread.isAlive():
-                        threadPool.remove(thread)
+                        if not threadPool:
+                            allThreadsCompleted = True
+                        
+                        sleep (0.01) # Give the CPU a rest
 
-                if not threadPool:
-                    allThreadsCompleted = True
-                sleep (0.01) # Give the CPU a rest
-
-                if isRobotLifted(debug):
-                    stop_threads = True
+                    if stop_threads:
+                        break
                 
-                #print("b", file=stderr)
 
-            if stop_threads:
-                break
-                
+
     print('Finished.', file = stderr)
     #sleep(15)
 

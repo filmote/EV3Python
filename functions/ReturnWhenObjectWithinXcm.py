@@ -21,7 +21,8 @@ def launch(debug, stop, distance):
     while True:
 
         if debug:
-            print(ir.proximity / constants.IR_PROMIXITY_TO_CM_RATIO, file = stderr)
+            #print(ir.proximity / constants.IR_PROMIXITY_TO_CM_RATIO, file = stderr)
+            pass
 
         if ir.proximity < distance * constants.IR_PROMIXITY_TO_CM_RATIO:
             if debug:

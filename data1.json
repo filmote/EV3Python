@@ -1,4 +1,5 @@
 {"steps": [
+    { "step": "waitUntilKeyPress" },
     { "step": "driveForXRotations", "rotations": 1, "speed": 20},
     { "step": "launchInSerial", "steps": [
         { "step": "delayForXSeconds", "length": 1},

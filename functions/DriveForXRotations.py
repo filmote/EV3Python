@@ -30,7 +30,8 @@ def launch(debug, stop, rotations, speed):
 
     while motorB.position < rotationB + (rotations * 360):
 
-        print("> Current position {}". format(motorB.position), file = stderr)
+        if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_CURRENT_POSITION:
+            print("> Current position {}". format(motorB.position), file = stderr)
 
         if stop():
             if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
