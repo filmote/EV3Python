@@ -36,7 +36,7 @@ def launch(debug, stop, colorSequence = True):
     if debug:
         print("Start WaitUntilKeyPress(), active number of threads {}, thread {}".format(threading.activeCount(), threading.current_thread().ident), file=stderr)
 
-    while True:
+    while not stop():
 
         if colorSequence:
 

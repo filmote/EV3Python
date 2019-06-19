@@ -13,7 +13,6 @@ from ast import literal_eval
 import threading
 import time
 import os
-import json
 import constants
 
 from utilities import MinimiseJSON
@@ -23,6 +22,7 @@ from functions import DelayForXSeconds
 from functions import ReturnWhenObjectWithinXcm
 from functions import WaitUntilKeyPress
 
+import xml.etree.ElementTree as ET
 
 
 # --------------------------------------------------------------------------------
@@ -46,11 +46,7 @@ from functions import WaitUntilKeyPress
 
 def launchStep(debug, stop, action):
 
-    if (action['step'] == 'launchInParallel'):
-
-        # Get all other parameters ..
-
-        delay = action['steps']
+    if (action.get('action') == 'launchInParallel'):
 
         # Create action ..
 
@@ -60,11 +56,7 @@ def launchStep(debug, stop, action):
 
     # --------------------------------------------------------------------------------
 
-    if (action['step'] == 'launchInSerial'):
-
-        # Get all other parameters ..
-
-        delay = action['steps']
+    if (action.get('action') == 'launchInSerial'):
 
         # Create action ..
 
@@ -75,7 +67,7 @@ def launchStep(debug, stop, action):
 
     # --------------------------------------------------------------------------------
 
-    if (action['step'] == 'waitUntilKeyPress'):
+    if (action.get('action') == 'waitUntilKeyPress'):
 
         # Create action ..
 
@@ -86,12 +78,12 @@ def launchStep(debug, stop, action):
 
     # --------------------------------------------------------------------------------
 
-    if (action['step'] == 'driveForXRotations'):
+    if (action.get('action') == 'driveForXRotations'):
 
         # Get all other parameters ..
 
-        rotations = action['rotations']
-        speed = action['speed']
+        rotations = float(action.get('rotations'))
+        speed = float(action.get('speed'))
 
         # Create action ..
 
@@ -102,11 +94,11 @@ def launchStep(debug, stop, action):
 
     # --------------------------------------------------------------------------------
 
-    if (action['step'] == 'delayForXSeconds'):
+    if (action.get('action') == 'delayForXSeconds'):
 
         # Get all other parameters ..
 
-        delay = action['length']
+        delay = float(action.get('length'))
 
         # Create action ..
 
@@ -117,11 +109,11 @@ def launchStep(debug, stop, action):
 
     # --------------------------------------------------------------------------------
 
-    if (action['step'] == 'returnWhenObjectWithinXcm'):
+    if (action.get('action') == 'returnWhenObjectWithinXcm'):
 
         # Get all other parameters ..
 
-        distance = action['distance']
+        distance = float(action.get('distance'))
 
         # Create action ..
 
@@ -163,22 +155,24 @@ def launchSteps(debug, stop, actions, inParallel = True):
     # Launch the process(es) for this step.  If the step contains sub-steps, then
     # we handle these differently to a single step ..
 
-    if 'steps' in actions:
-
+    if len(actions):
+#        print("multiple {}".format(actions.get('action')), file=stderr)
+        
         if inParallel:
-            for process in actions['steps']:
+            for process in actions:
                 newThread = launchStep(debug, stop, process)
                 threadPool.append(newThread)
 
         if not inParallel:
-            newThread = launchStep(debug, stop, actions['steps'][stepCount])
+            newThread = launchStep(debug, stop, actions[stepCount])
             stepCount = stepCount + 1
             threadPool.append(newThread)
-
+        
 
     # The step is a single action ..
 
-    if 'steps' not in actions:
+    if not len(actions):
+#        print("single {}".format(actions.get('action')), file=stderr)
 
         newThread = launchStep(debug, stop, actions)
         threadPool.append(newThread)
@@ -190,8 +184,6 @@ def launchSteps(debug, stop, actions, inParallel = True):
     # Query the threads repeatedly to see if any have completed ..
 
     while not allThreadsCompleted:
-
-        #print("c {}".format(threading.current_thread().ident), file=stderr)
 
         # Loop through the threads and remove finished ones from the thread pool ..
 
@@ -207,8 +199,8 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
             # If we were running multiple steps in serial and we still have more to go then load the next one ..
 
-            if inParallel == False and stepCount < len(actions['steps']):
-                newThread = launchStep(debug, stop, actions['steps'][stepCount])
+            if inParallel == False and stepCount < len(actions):
+                newThread = launchStep(debug, stop, actions[stepCount])
                 threadPool.append(newThread)
                 stepCount = stepCount + 1
 
@@ -218,16 +210,15 @@ def launchSteps(debug, stop, actions, inParallel = True):
             else:
                 allThreadsCompleted = True
 
-#            for thread in threadPool:
-#                thread.join()       
-
         sleep (0.1) # Give the CPU a rest
-        #print("a", file=stderr)
 
 
 
 # --------------------------------------------------------------------------------
 #  Main routine.
+#
+#  Refer: https://stackoverflow.com/questions/323972/is-there-any-way-to-kill-a-thread
+#
 # --------------------------------------------------------------------------------
 
 def main():
@@ -249,37 +240,37 @@ def main():
 
     # Load JSON and strip out comments ..
 
-    programs = MinimiseJSON.minimise("programs.json")
+    programsXML = ET.parse('data/programs.xml')
+    programs = programsXML.getroot()
 
     
     while True:
 
         rgb = cl.raw
 
-        for program in programs['programs']:
+        for program in programs:
 
-            rProgram = program['r']
-            gProgram = program['g']
-            bProgram = program['b']
+            rProgram = int(program.get('r'))
+            gProgram = int(program.get('g'))
+            bProgram = int(program.get('b'))
 
             if abs(rgb[0] - rProgram) < constants.COLOUR_TOLERANCE and abs(rgb[1] - gProgram) < constants.COLOUR_TOLERANCE and abs(rgb[2] - bProgram) < constants.COLOUR_TOLERANCE:
 
                 if debug:
-                    print("Run {}".format(program["program"]), file = stderr)
+                    print("Run {}".format(program.get('name')), file = stderr)
 
 
-                # Load JSON and strip out comments ..
+                # Load progam into memory ..
 
-                data = MinimiseJSON.minimise(program['fileName'])
+                dataXML = ET.parse('data/' + program.get('fileName'))
+                data = dataXML.getroot()
 
                 threadPool = []
                 stop_threads = False
 
-                for process in data['steps']:
+                for process in data:
 
-                    #print("a {}".format(threading.current_thread().ident), file=stderr)
-
-                    inParallel = False if process['step'] == 'launchInSerial' else True
+                    inParallel = False if process.get('action') == 'launchInSerial' else True
                     thread = threading.Thread(target = launchSteps, args = (debug, lambda: stop_threads, process, inParallel))
                     threadPool.append(thread)
                     thread.start()
@@ -287,8 +278,6 @@ def main():
                     allThreadsCompleted = False
 
                     while not allThreadsCompleted:
-
-                        #print("b {}".format(threading.current_thread().ident), file=stderr)
 
                         if RobotLifted.isRobotLifted(debug, constants.ROBOT_LIFTED_USE_TOUCH_SENSOR):
                             stop_threads = True
@@ -300,17 +289,20 @@ def main():
                         if not threadPool:
                             allThreadsCompleted = True
 
-#                        for thread in threadPool:
-#                            thread.join()
+
+                        # If the robot has been lifted then exist the 'while' loop ..
 
                         if stop_threads:
                             break
 
-                        sleep(0.1)  # Wait 0.01 second
+                        sleep(0.1) # Give the CPU a rest
+
+
+                    # If the robot has been lifted then exist the 'while' loop ..
 
                     if stop_threads:
                         break
-                
+               
 
     if debug:
         print('Finished.', file = stderr)

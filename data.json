@@ -1,8 +1,0 @@
-/*
- *  Simple run 41
- *
- */
-{"steps": [
-    { "step": "returnWhenObjectWithinXcm", "distance": 15}
-    ]
-}

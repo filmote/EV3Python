@@ -1,9 +1,0 @@
-/*
- *  Simple run 41
- *
- */
- {"programs": [
-    { "program": "Run1", "fileName" : "data.json", "r" : 100, "g" : 58, "b" : 58 },
-    { "program": "Run2", "fileName" : "data1.json", "r" : 200, "g" : 58, "b" : 58 }
-    ]
-}

@@ -24,6 +24,8 @@ def launch(debug, stop, rotations, speed):
 
     if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
         print("Start driveForXRotations({}, {}), active number of threads {}, thread {}".format(rotations, speed, threading.activeCount(), threading.current_thread().ident), file=stderr)
+
+    if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_CURRENT_POSITION:
         print("> Starting position {}". format(rotationB), file = stderr)
 
     tank_pair.on(left_speed=speed, right_speed=speed)
