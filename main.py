@@ -259,10 +259,10 @@ def main():
 
                 print("Run {}".format(program["program"]), file = stderr)
 
+
                 # Load JSON and strip out comments ..
 
                 data = MinimiseJSON.minimise(program['fileName'])
-
 
                 threadPool = []
                 stop_threads = False
