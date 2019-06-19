@@ -17,6 +17,7 @@ import json
 import constants
 
 from utilities import MinimiseJSON
+from utilities import RobotLifted
 from functions import DriveForXRotations
 from functions import DelayForXSeconds
 from functions import ReturnWhenObjectWithinXcm
@@ -154,8 +155,6 @@ def launchStep(debug, stop, action):
 def launchSteps(debug, stop, actions, inParallel = True):
 
     threadPool = []
-    threadPoolTotalCount = 0
-    threadPoolCount = 0
     stepCount = 0
 
     stop_threads = False
@@ -170,13 +169,11 @@ def launchSteps(debug, stop, actions, inParallel = True):
             for process in actions['steps']:
                 newThread = launchStep(debug, stop, process)
                 threadPool.append(newThread)
-                threadPoolCount = threadPoolCount + 1
 
         if not inParallel:
             newThread = launchStep(debug, stop, actions['steps'][stepCount])
             stepCount = stepCount + 1
             threadPool.append(newThread)
-            threadPoolCount = threadPoolCount + 1
 
 
     # The step is a single action ..
@@ -185,10 +182,8 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
         newThread = launchStep(debug, stop, actions)
         threadPool.append(newThread)
-        threadPoolCount = 1
 
 
-    threadPoolTotalCount = threadPoolCount
     allThreadsCompleted = False
 
 
@@ -202,7 +197,6 @@ def launchSteps(debug, stop, actions, inParallel = True):
         for worker in threadPool:
             if not worker.isAlive():
                 threadPool.remove(worker)
-                threadPoolCount = threadPoolCount - 1
 
 
         # If there are no more active threads then check to see if we are done ..
@@ -216,7 +210,6 @@ def launchSteps(debug, stop, actions, inParallel = True):
                 newThread = launchStep(debug, stop, actions['steps'][stepCount])
                 threadPool.append(newThread)
                 stepCount = stepCount + 1
-                threadPoolCount = threadPoolCount + 1
 
 
             # Otherwise we have completed all of the work for this step and we are done ..
@@ -227,31 +220,6 @@ def launchSteps(debug, stop, actions, inParallel = True):
         sleep (0.01) # Give the CPU a rest
         #print("a", file=stderr)
 
-
-# --------------------------------------------------------------------------------
-#  Has the robot been lifted off the table?
-# 
-#  Parameters:      
-#
-#  debug        - If in debug mode, details will be printed to the console.
-#                 the actions in parallel or serial?  Default is in parallel.
-#
-#  Returns:
-#  
-#  boolean      - True if the robot has been lifted off the table.
-#               - False if the robot is still on the table.
-#
-# --------------------------------------------------------------------------------
-
-def isRobotLifted(debug):
-
-    cl = ColorSensor() 
-    lifted = cl.raw[0] < constants.LIFTED_MINIMUM_THRESHOLD and cl.raw[1] < constants.LIFTED_MINIMUM_THRESHOLD and cl.raw[2] < constants.LIFTED_MINIMUM_THRESHOLD
-
-    if debug and lifted:
-        print("Robot lifted.", file = stderr)
-
-    return lifted
 
 
 # --------------------------------------------------------------------------------
@@ -289,7 +257,7 @@ def main():
 
             if abs(rgb[0] - rProgram) < constants.COLOUR_TOLERANCE and abs(rgb[1] - gProgram) < constants.COLOUR_TOLERANCE and abs(rgb[2] - bProgram) < constants.COLOUR_TOLERANCE:
 
-                print("Run {} ".format(program["program"]), file = stderr)
+                print("Run {}".format(program["program"]), file = stderr)
 
                 # Load JSON and strip out comments ..
 
@@ -310,7 +278,7 @@ def main():
 
                     while not allThreadsCompleted:
 
-                        if isRobotLifted(debug):
+                        if RobotLifted.isRobotLifted(debug):
                             stop_threads = True
 
                         for thread in threadPool:
