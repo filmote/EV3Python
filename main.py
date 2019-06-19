@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+import threading
+import time
+import os
+import constants
+import xml.etree.ElementTree as ET
+
 from ev3dev2.sensor.lego import TouchSensor, UltrasonicSensor, InfraredSensor, ColorSensor
 from ev3dev2.motor import MoveTank, OUTPUT_B, OUTPUT_C
 from ev3dev2.motor import LargeMotor
@@ -8,21 +14,13 @@ from ev3dev2.led import Leds
 from ev3dev2.sound import Sound
 from time import sleep
 from sys import stderr
-from ast import literal_eval
-
-import threading
-import time
-import os
-import constants
 
 from utilities import MinimiseJSON
 from utilities import RobotLifted
-from functions import DriveForXRotations
-from functions import DelayForXSeconds
-from functions import ReturnWhenObjectWithinXcm
-from functions import WaitUntilKeyPress
-
-import xml.etree.ElementTree as ET
+from functions.DriveForXRotations import driveForXRotations
+from functions.DelayForXSeconds import delayForXSeconds
+from functions.ReturnWhenObjectWithinXcm import returnWhenObjectWithinXcm
+from functions.WaitUntilKeyPress import waitUntilKeyPress
 
 
 # --------------------------------------------------------------------------------
@@ -48,8 +46,6 @@ def launchStep(debug, stop, action):
 
     if (action.get('action') == 'launchInParallel'):
 
-        # Create action ..
-
         thread = threading.Thread(target = launchSteps, args = (debug, stop, action, True))
         thread.start()
         return thread
@@ -57,8 +53,6 @@ def launchStep(debug, stop, action):
     # --------------------------------------------------------------------------------
 
     if (action.get('action') == 'launchInSerial'):
-
-        # Create action ..
 
         thread = threading.Thread(target = launchSteps, args = (debug, stop, action, False))
         thread.start()
@@ -71,7 +65,7 @@ def launchStep(debug, stop, action):
 
         # Create action ..
 
-        thread = threading.Thread(target = WaitUntilKeyPress.launch, args = (debug, stop))
+        thread = threading.Thread(target = waitUntilKeyPress, args = (debug, stop))
         thread.start()
         return thread
 
@@ -87,7 +81,7 @@ def launchStep(debug, stop, action):
 
         # Create action ..
 
-        thread = threading.Thread(target = DriveForXRotations.launch, args = (debug, stop, rotations, speed))
+        thread = threading.Thread(target = driveForXRotations, args = (debug, stop, rotations, speed))
         thread.start()
         return thread
 
@@ -102,7 +96,7 @@ def launchStep(debug, stop, action):
 
         # Create action ..
 
-        thread = threading.Thread(target = DelayForXSeconds.launch, args = (debug, stop, delay))
+        thread = threading.Thread(target = delayForXSeconds, args = (debug, stop, delay))
         thread.start()
         return thread
 
@@ -117,7 +111,7 @@ def launchStep(debug, stop, action):
 
         # Create action ..
 
-        thread = threading.Thread(target = ReturnWhenObjectWithinXcm.launch, args = (debug, stop, distance))
+        thread = threading.Thread(target = returnWhenObjectWithinXcm, args = (debug, stop, distance))
         thread.start()
         return thread
 

@@ -15,7 +15,7 @@ import os
 import json
 import constants
 
-def launch(debug, stop, rotations, speed):
+def driveForXRotations(debug, stop, rotations, speed):
 
     motorB = LargeMotor(OUTPUT_B)
     tank_pair = MoveTank(OUTPUT_B, OUTPUT_C)

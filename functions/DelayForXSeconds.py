@@ -11,7 +11,7 @@ import os
 import json
 import constants
 
-def launch(debug, stop, delayLength):
+def delayForXSeconds(debug, stop, delayLength):
 
     if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
         print("Start delayForXSeconds({}), active number of threads {}, thread {}".format(delayLength, threading.activeCount(), threading.current_thread().ident), file=stderr)

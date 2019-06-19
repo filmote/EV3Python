@@ -11,7 +11,7 @@ import time
 import os
 import json
 
-def launch(debug, stop, distance):
+def returnWhenObjectWithinXcm(debug, stop, distance):
 
     ir = InfraredSensor() 
 

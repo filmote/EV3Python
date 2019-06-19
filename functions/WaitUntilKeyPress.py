@@ -25,7 +25,7 @@ def setLEDColour(colour):
     leds.set_color('RIGHT', colourText)
     
 
-def launch(debug, stop, colorSequence = True):
+def waitUntilKeyPress(debug, stop, colorSequence = True):
 
     counter = 0
     colour = 0
