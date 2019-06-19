@@ -40,7 +40,9 @@ def launch(debug, stop, rotations, speed):
 
     if not stop():
 
-        print("> Final position {}". format(rotationB), file = stderr)
+        if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_CURRENT_POSITION:
+            print("> Final position {}". format(rotationB), file = stderr)
+            
         tank_pair.off()
 
         if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:

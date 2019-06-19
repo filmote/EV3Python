@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from ev3dev2.sensor.lego import ColorSensor
+from ev3dev2.sensor.lego import TouchSensor, ColorSensor
 from sys import stderr
 
 import threading
@@ -14,7 +14,7 @@ import constants
 #  Parameters:      
 #
 #  debug        - If in debug mode, details will be printed to the console.
-#                 the actions in parallel or serial?  Default is in parallel.
+#  mode         - ROBOT_LIFTED_USE_TOUCH_SENSOR or ROBOT_LIFTED_USE_COLOUR_SENSOR.
 #
 #  Returns:
 #  
@@ -23,10 +23,19 @@ import constants
 #
 # --------------------------------------------------------------------------------
 
-def isRobotLifted(debug):
+def isRobotLifted(debug, mode):
 
-    cl = ColorSensor() 
-    lifted = cl.raw[0] < constants.LIFTED_MINIMUM_THRESHOLD and cl.raw[1] < constants.LIFTED_MINIMUM_THRESHOLD and cl.raw[2] < constants.LIFTED_MINIMUM_THRESHOLD
+    lifted = False
+
+    if mode == constants.ROBOT_LIFTED_USE_COLOUR_SENSOR:
+
+        cl = ColorSensor() 
+        lifted = cl.raw[0] < constants.LIFTED_MINIMUM_THRESHOLD and cl.raw[1] < constants.LIFTED_MINIMUM_THRESHOLD and cl.raw[2] < constants.LIFTED_MINIMUM_THRESHOLD
+
+    if mode == constants.ROBOT_LIFTED_USE_TOUCH_SENSOR:
+
+        ts = TouchSensor()
+        lifted = ts.is_pressed
 
     if debug and lifted:
         print("Robot lifted.", file = stderr)

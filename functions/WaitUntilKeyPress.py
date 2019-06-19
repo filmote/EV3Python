@@ -31,6 +31,8 @@ def launch(debug, stop, colorSequence = True):
     colour = 0
     btn = Button()
 
+    setLEDColour(5)
+
     if debug:
         print("Start WaitUntilKeyPress(), active number of threads {}, thread {}".format(threading.activeCount(), threading.current_thread().ident), file=stderr)
 
@@ -46,18 +48,15 @@ def launch(debug, stop, colorSequence = True):
 
         if btn.any():   
 
-            leds.all_off()
+            setLEDColour(5)
 
             if debug:
                 print("End WaitUntilKeyPress().".format(threading.current_thread().ident), file=stderr)
             break
 
-        else:
-            sleep(0.01)  # Wait 0.01 second
-
     if stop():
 
-        leds.all_off()
+        setLEDColour(5)
         
         if debug:
             print("Kill WaitUntilKeyPress().".format(threading.current_thread().ident), file=stderr)

@@ -191,6 +191,7 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
     while not allThreadsCompleted:
 
+        #print("c {}".format(threading.current_thread().ident), file=stderr)
 
         # Loop through the threads and remove finished ones from the thread pool ..
 
@@ -216,8 +217,11 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
             else:
                 allThreadsCompleted = True
-        
-        sleep (0.01) # Give the CPU a rest
+
+#            for thread in threadPool:
+#                thread.join()       
+
+        sleep (0.1) # Give the CPU a rest
         #print("a", file=stderr)
 
 
@@ -230,12 +234,17 @@ def main():
 
     cl = ColorSensor()
 
-    print('Starting Program..', file=stderr)
+    leds = Leds()
+    leds.all_off()
 
 
     # Set up debugging level ..
 
+    # debug = constants.DEBUG_NONE 
     debug = constants.DEBUG | constants.DEBUG_THREAD_LIFECYCLE
+
+    if debug:
+        print('Waiting for an accessory ..', file=stderr)
 
 
     # Load JSON and strip out comments ..
@@ -253,11 +262,10 @@ def main():
             gProgram = program['g']
             bProgram = program['b']
 
-            #print("compare {} to ({}, {}, {})".format(rgb, rProgram, gProgram, bProgram), file=stderr)
-
             if abs(rgb[0] - rProgram) < constants.COLOUR_TOLERANCE and abs(rgb[1] - gProgram) < constants.COLOUR_TOLERANCE and abs(rgb[2] - bProgram) < constants.COLOUR_TOLERANCE:
 
-                print("Run {}".format(program["program"]), file = stderr)
+                if debug:
+                    print("Run {}".format(program["program"]), file = stderr)
 
 
                 # Load JSON and strip out comments ..
@@ -269,6 +277,8 @@ def main():
 
                 for process in data['steps']:
 
+                    #print("a {}".format(threading.current_thread().ident), file=stderr)
+
                     inParallel = False if process['step'] == 'launchInSerial' else True
                     thread = threading.Thread(target = launchSteps, args = (debug, lambda: stop_threads, process, inParallel))
                     threadPool.append(thread)
@@ -278,7 +288,9 @@ def main():
 
                     while not allThreadsCompleted:
 
-                        if RobotLifted.isRobotLifted(debug):
+                        #print("b {}".format(threading.current_thread().ident), file=stderr)
+
+                        if RobotLifted.isRobotLifted(debug, constants.ROBOT_LIFTED_USE_TOUCH_SENSOR):
                             stop_threads = True
 
                         for thread in threadPool:
@@ -287,16 +299,21 @@ def main():
 
                         if not threadPool:
                             allThreadsCompleted = True
-                        
-                        sleep (0.01) # Give the CPU a rest
+
+#                        for thread in threadPool:
+#                            thread.join()
+
+                        if stop_threads:
+                            break
+
+                        sleep(0.1)  # Wait 0.01 second
 
                     if stop_threads:
                         break
                 
 
-
-    print('Finished.', file = stderr)
-    #sleep(15)
-
+    if debug:
+        print('Finished.', file = stderr)
+    
 if __name__ == '__main__':
     main()
