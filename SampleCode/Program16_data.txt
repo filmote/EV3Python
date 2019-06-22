@@ -1,0 +1,4 @@
+onForSeconds,lm1,20,4
+onForSeconds,lm2,40,3
+delayForSeconds,None,0,2
+onForSeconds,mm,10,8

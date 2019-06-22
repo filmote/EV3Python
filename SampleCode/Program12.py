@@ -3,7 +3,9 @@
 from ev3dev2.motor import MediumMotor, LargeMotor, OUTPUT_B, OUTPUT_C
 from collections import namedtuple
 from time import sleep
+
 import threading
+import types
 
 def waitUntilAllThreadsComplete(threadPool): 
     while threadPool:
@@ -12,10 +14,20 @@ def waitUntilAllThreadsComplete(threadPool):
                 threadPool.remove(thread)
                     
 def onForSeconds(motor, speed, seconds):
-    motor.on_for_seconds(speed, seconds, brake = True, block = False)
+    motor.on_for_seconds(speed, seconds, brake = True, block = True)
 
 def delayForSeconds(seconds):
     sleep(seconds)
+
+def createAction(name, motor, speed, seconds):
+
+    action = types.SimpleNamespace()
+    action.name = name
+    action.motor = motor
+    action.speed = speed
+    action.seconds = seconds
+
+    return action
 
 def launchStep(action):
 
@@ -39,10 +51,10 @@ def main():
     lm2 = LargeMotor(OUTPUT_C)
     mm = MediumMotor()
     
-    action1 = Action("onForSeconds", lm1, 20, 4)
-    action2 = Action("onForSeconds", lm2, 40, 3)
-    action3 = Action("delayForSeconds", None, None, 2)
-    action4 = Action("onForSeconds", mm, 10, 8)
+    action1 = createAction("onForSeconds", lm1, 20, 4)
+    action2 = createAction("onForSeconds", lm2, 40, 3)
+    action3 = createAction("delayForSeconds", None, None, 2)
+    action4 = createAction("onForSeconds", mm, 10, 8)
     
     actionParallel = []
     actionParallel.append(action1)

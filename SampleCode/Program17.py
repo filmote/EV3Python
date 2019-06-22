@@ -32,11 +32,21 @@ def delayForSeconds(stop, seconds):
 
 def createAction(name, motor, speed, seconds):
 
+    lm1 = LargeMotor(OUTPUT_B)
+    lm2 = LargeMotor(OUTPUT_C)
+    mm = MediumMotor()
+
     action = types.SimpleNamespace()
     action.name = name
-    action.motor = motor
     action.speed = speed
     action.seconds = seconds
+
+    if (motor == "lm1"):
+        action.motor = lm1
+    if (motor == "lm2"):
+        action.motor = lm2
+    if (motor == "mm"):
+        action.motor = mm
 
     return action
 
@@ -63,32 +73,25 @@ def main():
     mm = MediumMotor()
     ts = TouchSensor()
     
-    action1 = createAction("onForSeconds", lm1, 20, 4)
-    action2 = createAction("onForSeconds", lm2, 40, 3)
-    action3 = createAction("delayForSeconds", None, None, 2)
-    action4 = createAction("onForSeconds", mm, 10, 8)
-    
-    actionParallel = []
-    actionParallel.append(action1)
-    actionParallel.append(action2)
-    
-    actions.append(actionParallel)
-    actions.append(action3)
-    actions.append(action4)
-    
-    for action in actions:
+    f = open("Program16_data.txt", "r")
 
-        # are their multiple actions to execute in parallel?
-        if isinstance(action, list):
-    
-            for subAction in action:
-                thread = launchStep(lambda:stopProcessing, subAction)
-                threadPool.append(thread)
-    
-        # is there a single action to execute?
-        else:
-            thread = launchStep(lambda:stopProcessing, action)
-            threadPool.append(thread)
+    for aLineOfText in f:
+
+        tokens = aLineOfText .split(",")  
+
+        # read the string values into local variables - make 
+        # the speed and seconds floating point numbers
+        name = tokens[0]
+        motor = tokens[1]
+        speed = float(tokens[2])
+        seconds = float(tokens[3])
+
+        action = createAction(name, motor, speed, seconds)
+
+
+        # launch the action
+        thread = launchStep(lambda:stopProcessing, action)
+        threadPool.append(thread)
 
         while not stopProcessing:
 
