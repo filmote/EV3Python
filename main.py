@@ -15,7 +15,6 @@ from ev3dev2.sound import Sound
 from time import sleep
 from sys import stderr
 
-from utilities import MinimiseJSON
 from utilities import RobotLifted
 from functions.DriveForXRotations import driveForXRotations
 from functions.DelayForXSeconds import delayForXSeconds
@@ -181,8 +180,8 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
         # Loop through the threads and remove finished ones from the thread pool ..
 
-        for worker in threadPool:
-            if not worker.isAlive():
+        for thread in threadPool:
+            if not thread.isAlive():
                 threadPool.remove(worker)
 
 
@@ -257,15 +256,15 @@ def main():
                 # Load progam into memory ..
 
                 dataXML = ET.parse('data/' + program.get('fileName'))
-                data = dataXML.getroot()
+                steps = dataXML.getroot()
 
                 threadPool = []
                 stop_threads = False
 
-                for process in data:
+                for step in steps:
 
-                    inParallel = False if process.get('action') == 'launchInSerial' else True
-                    thread = threading.Thread(target = launchSteps, args = (debug, lambda: stop_threads, process, inParallel))
+                    inParallel = False if step.get('action') == 'launchInSerial' else True
+                    thread = threading.Thread(target = launchSteps, args = (debug, lambda: stop_threads, step, inParallel))
                     threadPool.append(thread)
                     thread.start()
 
@@ -292,7 +291,7 @@ def main():
                         sleep(0.1) # Give the CPU a rest
 
 
-                    # If the robot has been lifted then exist the 'while' loop ..
+                    # If the robot has been lifted then exit the 'while' loop ..
 
                     if stop_threads:
                         break

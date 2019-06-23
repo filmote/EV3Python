@@ -3,6 +3,7 @@
 from ev3dev2.motor import MediumMotor, LargeMotor, OUTPUT_B, OUTPUT_C
 from ev3dev2.sensor.lego import TouchSensor
 from time import sleep
+import xml.etree.ElementTree as ET
 
 import threading
 import time
@@ -21,6 +22,7 @@ def onForSeconds(stop, motor, speed, seconds):
 
     motor.off()
 
+
 def delayForSeconds(stop, seconds):
 
     start_time = time.time()
@@ -30,25 +32,33 @@ def delayForSeconds(stop, seconds):
         if stop():
             break
 
-def createAction(name, motor, speed, seconds):
-
-    action = types.SimpleNamespace()
-    action.name = name
-    action.motor = motor
-    action.speed = speed
-    action.seconds = seconds
-
-    return action
 
 def launchStep(stop, action):
+    
+    lm1 = LargeMotor(OUTPUT_B)
+    lm2 = LargeMotor(OUTPUT_C)
+    mm = MediumMotor()
+    
+    name = action.get('action')
+    motor = action.get('motor')
+    speed = float(action.get('speed'))
+    seconds = float(action.get('seconds'))
 
-    if action.name == "onForSeconds":
-        thread = threading.Thread(target = onForSeconds, args = (stop, action.motor, action.speed, action.seconds))
+    if name == "onForSeconds":
+
+        if (motor == "lm1"):
+            motorToUse = lm1
+        if (motor == "lm2"):
+            motorToUse = lm2
+        if (motor == "mm"):
+            motorToUse = mm
+
+        thread = threading.Thread(target = onForSeconds, args = (stop, motorToUse, speed, seconds))
         thread.start()
         return thread
     
-    if action.name == "delayForSeconds":
-        thread = threading.Thread(target = delayForSeconds, args = (stop, action.seconds))
+    if name == "delayForSeconds":
+        thread = threading.Thread(target = delayForSeconds, args = (stop, seconds))
         thread.start()
         return thread
 
@@ -57,38 +67,27 @@ def main():
     threadPool = []
     actions = []
     stopProcessing = False
-    
-    lm1 = LargeMotor(OUTPUT_B)
-    lm2 = LargeMotor(OUTPUT_C)
-    mm = MediumMotor()
+   
     ts = TouchSensor()
     
-    action1 = createAction("onForSeconds", lm1, 20, 4)
-    action2 = createAction("onForSeconds", lm2, 40, 3)
-    action3 = createAction("delayForSeconds", None, None, 2)
-    action4 = createAction("onForSeconds", mm, 10, 8)
-    
-    actionParallel = []
-    actionParallel.append(action1)
-    actionParallel.append(action2)
-    
-    actions.append(actionParallel)
-    actions.append(action3)
-    actions.append(action4)
-    
-    for action in actions:
+    xmlDocument = ET.parse('Program21_data.xml')
+    steps = xmlDocument.getroot()
+
+    for step in steps:
+
+        action = step.get('action')
 
         # are their multiple actions to execute in parallel?
-        if isinstance(action, list):
-    
-            for subAction in action:
-                thread = launchStep(lambda:stopProcessing, subAction)
+        if action == 'launchInParallel':
+            for subSteps in step:
+                thread = launchStep(lambda:stopProcessing, subSteps)
                 threadPool.append(thread)
     
         # is there a single action to execute?
         else:
-            thread = launchStep(lambda:stopProcessing, action)
+            thread = launchStep(lambda:stopProcessing, step)
             threadPool.append(thread)
+
 
         while not stopProcessing:
 
@@ -105,6 +104,7 @@ def main():
             # if the touch sensor is pressed then complete everything
             if ts.is_pressed:
                 stopProcessing = True
+                break
 
             sleep(0.25)
 
