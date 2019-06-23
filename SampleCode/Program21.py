@@ -62,53 +62,6 @@ def launchStep(stop, action):
         thread.start()
         return thread
 
-'''
-def launchSteps(stop, actions, inParallel = True):
-
-    threadPool = []
-    stop_threads = False
-    
-
-    # Launch the action(s) for this step.  If the step contains sub-steps, then
-    # we handle these differently to a single step ..
-
-    if len(actions):
-        
-        for process in actions:
-            newThread = launchStep(stop, process)
-            threadPool.append(newThread)
-        
-
-    # The step is a single action ..
-
-    if not len(actions):
-
-        newThread = launchStep(stop, actions)
-        threadPool.append(newThread)
-
-
-    allThreadsCompleted = False
-
-
-    # Query the threads repeatedly to see if any have completed ..
-
-    while not allThreadsCompleted:
-
-        # Loop through the threads and remove finished ones from the thread pool ..
-
-        for thread in threadPool:
-            if not thread.isAlive():
-                threadPool.remove(worker)
-
-
-        # If there are no more active threads then check to see if we are done ..
-
-        if not threadPool:
-
-            allThreadsCompleted = True
-
-        sleep (0.1) # Give the CPU a rest
-'''
 def main():
 
     threadPool = []

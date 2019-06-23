@@ -256,15 +256,15 @@ def main():
                 # Load progam into memory ..
 
                 dataXML = ET.parse('data/' + program.get('fileName'))
-                data = dataXML.getroot()
+                steps = dataXML.getroot()
 
                 threadPool = []
                 stop_threads = False
 
-                for process in data:
+                for step in steps:
 
-                    inParallel = False if process.get('action') == 'launchInSerial' else True
-                    thread = threading.Thread(target = launchSteps, args = (debug, lambda: stop_threads, process, inParallel))
+                    inParallel = False if step.get('action') == 'launchInSerial' else True
+                    thread = threading.Thread(target = launchSteps, args = (debug, lambda: stop_threads, step, inParallel))
                     threadPool.append(thread)
                     thread.start()
 

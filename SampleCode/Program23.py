@@ -11,7 +11,7 @@ def main():
     cl = ColorSensor()
 
     # Load programs ..
-    programsXML = ET.parse('Program22_programs.xml')
+    programsXML = ET.parse('Program23_programs.xml')
     programs = programsXML.getroot()
     
     while True:
@@ -29,11 +29,19 @@ def main():
             gColourSensor = rgb[1]
             bColourSensor = rgb[2]
 
-            print('Colour sensor {} compared to {} ({}, {}, {}) result ({}, {}, {})'.format(rgb, programName, rProgram, gProgram, bProgram, rColourSensor - rProgram, gColourSensor - gProgram, bColourSensor - bProgram), file = stderr)
-
             if abs(rColourSensor - rProgram) < 20 and abs(gColourSensor - gProgram) < 20 and abs(bColourSensor - bProgram) < 20:
 
-                print('Run program {}'.format(program.get('fileName')), file=stderr)
+                fileName = program.get('fileName')
+
+                
+                # Load program into memory ..
+
+                dataXML = ET.parse(fileName)
+                steps = dataXML.getroot()
+
+                for step in steps:
+
+                    print(step.get('name'))
 
     
 if __name__ == '__main__':
