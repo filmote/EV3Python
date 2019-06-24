@@ -74,13 +74,13 @@ def main():
             thread = launchStep(action)
             threadPool.append(thread)
 
-        # remove any completed threads from the pool
-        for thread in threadPool:
-            if not thread.isAlive():
-                threadPool.remove(thread)
+        while not stopProcessing:
 
-        while stopProcessing:
-
+            # remove any completed threads from the pool
+            for thread in threadPool:
+                if not thread.isAlive():
+                    threadPool.remove(thread)
+                    
             # if there are no threads running, exist the 'while' loop 
             # and start the next action from the list 
             if not threadPool:

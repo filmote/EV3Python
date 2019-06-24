@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from ev3dev2.motor import MediumMotor, LargeMotor, OUTPUT_B, OUTPUT_C
-from collections import namedtuple
 from time import sleep
 
 import threading
@@ -45,7 +44,6 @@ def main():
 
     threadPool = []
     actions = []
-    Action = namedtuple('Action', 'name, motor, speed, seconds')
 
     largeMotor_Left = LargeMotor(OUTPUT_B)
     largeMotor_Right = LargeMotor(OUTPUT_C)
