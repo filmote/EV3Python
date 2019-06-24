@@ -13,7 +13,7 @@ import json
 
 def returnWhenObjectWithinXcm(debug, stop, distance):
 
-    ir = InfraredSensor() 
+    ir = InfraredSensor(constants.INPUT_INFRARED_SENSOR) 
 
     if debug:
         print("Start returnWhenObjectWithinXcm({}), active number of threads {}, thread {}".format(distance, threading.activeCount(), threading.current_thread().ident), file=stderr)

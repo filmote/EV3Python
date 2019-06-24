@@ -47,14 +47,14 @@ def main():
     actions = []
     Action = namedtuple('Action', 'name, motor, speed, seconds')
 
-    lm1 = LargeMotor(OUTPUT_B)
-    lm2 = LargeMotor(OUTPUT_C)
-    mm = MediumMotor()
+    largeMotor_Left = LargeMotor(OUTPUT_B)
+    largeMotor_Right = LargeMotor(OUTPUT_C)
+    mediumMotor = MediumMotor()
     
-    action1 = createAction("onForSeconds", lm1, 20, 4)
-    action2 = createAction("onForSeconds", lm2, 40, 3)
+    action1 = createAction("onForSeconds", largeMotor_Left, 20, 4)
+    action2 = createAction("onForSeconds", largeMotor_Right, 40, 3)
     action3 = createAction("delayForSeconds", None, None, 2)
-    action4 = createAction("onForSeconds", mm, 10, 8)
+    action4 = createAction("onForSeconds", mediumMotor, 10, 8)
     
     actionParallel = []
     actionParallel.append(action1)

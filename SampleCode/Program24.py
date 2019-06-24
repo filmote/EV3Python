@@ -35,9 +35,9 @@ def delayForSeconds(stop, seconds):
 
 def launchStep(stop, action):
     
-    lm1 = LargeMotor(OUTPUT_B)
-    lm2 = LargeMotor(OUTPUT_C)
-    mm = MediumMotor()
+    largeMotor_Left = LargeMotor(OUTPUT_B)
+    largeMotor_Right = LargeMotor(OUTPUT_C)
+    mediumMotor = MediumMotor()
     
     name = action.get('action')
     motor = action.get('motor')
@@ -46,12 +46,12 @@ def launchStep(stop, action):
 
     if name == "onForSeconds":
 
-        if (motor == "lm1"):
-            motorToUse = lm1
-        if (motor == "lm2"):
-            motorToUse = lm2
-        if (motor == "mm"):
-            motorToUse = mm
+        if (motor == "largeMotor_Left"):
+            motorToUse = largeMotor_Left
+        if (motor == "largeMotor_Right"):
+            motorToUse = largeMotor_Right
+        if (motor == "mediumMotor"):
+            motorToUse = mediumMotor
 
         thread = threading.Thread(target = onForSeconds, args = (stop, motorToUse, speed, seconds))
         thread.start()

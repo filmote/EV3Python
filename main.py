@@ -7,9 +7,9 @@ import constants
 import xml.etree.ElementTree as ET
 
 from ev3dev2.sensor.lego import TouchSensor, UltrasonicSensor, InfraredSensor, ColorSensor
-from ev3dev2.motor import MoveTank, OUTPUT_B, OUTPUT_C
-from ev3dev2.motor import LargeMotor
-from ev3dev2.motor import SpeedDPS, SpeedRPM, SpeedRPS, SpeedDPM
+from ev3dev2.sensor.lego import INPUT_1, INPUT_2, INPUT_3, INPUT_4
+from ev3dev2.motor import MoveTank, LargeMotor
+from ev3dev2.motor import OUTPUT_A, OUTPUT_B, OUTPUT_C, OUTPUT_D
 from ev3dev2.led import Leds
 from ev3dev2.sound import Sound
 from time import sleep

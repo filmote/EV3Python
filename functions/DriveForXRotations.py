@@ -17,10 +17,10 @@ import constants
 
 def driveForXRotations(debug, stop, rotations, speed):
 
-    motorB = LargeMotor(OUTPUT_B)
-    tank_pair = MoveTank(OUTPUT_B, OUTPUT_C)
+    motorLeft = LargeMotor(constants.OUTPUT_LARGE_MOTOR_LEFT)
+    tank_pair = MoveTank(constants.OUTPUT_LARGE_MOTOR_LEFT, constants.OUTPUT_LARGE_MOTOR_RIGHT)
 
-    rotationB = motorB.position
+    rotationB = motorLeft.position
 
     if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
         print("Start driveForXRotations({}, {}), active number of threads {}, thread {}".format(rotations, speed, threading.activeCount(), threading.current_thread().ident), file=stderr)
@@ -30,10 +30,10 @@ def driveForXRotations(debug, stop, rotations, speed):
 
     tank_pair.on(left_speed=speed, right_speed=speed)
 
-    while motorB.position < rotationB + (rotations * 360):
+    while motorLeft.position < rotationB + (rotations * 360):
 
         if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_CURRENT_POSITION:
-            print("> Current position {}". format(motorB.position), file = stderr)
+            print("> Current position {}". format(motorLeft.position), file = stderr)
 
         if stop():
             if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:

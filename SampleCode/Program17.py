@@ -32,19 +32,19 @@ def delayForSeconds(stop, seconds):
 
 def createAction(name, motor, speed, seconds):
 
-    lm1 = LargeMotor(OUTPUT_B)
-    lm2 = LargeMotor(OUTPUT_C)
-    mm = MediumMotor()
+    largeMotor_Left = LargeMotor(OUTPUT_B)
+    largeMotor_Right = LargeMotor(OUTPUT_C)
+    mediumMotor = MediumMotor()
 
     action = types.SimpleNamespace()
     action.name = name
     action.speed = speed
     action.seconds = seconds
 
-    if (motor == "lm1"):
-        action.motor = lm1
-    if (motor == "lm2"):
-        action.motor = lm2
+    if (motor == "largeMotor_Left"):
+        action.motor = largeMotor_Left
+    if (motor == "largeMotor_Right"):
+        action.motor = largeMotor_Right
     if (motor == "mm"):
         action.motor = mm
 
@@ -68,9 +68,9 @@ def main():
     actions = []
     stopProcessing = False
     
-    lm1 = LargeMotor(OUTPUT_B)
-    lm2 = LargeMotor(OUTPUT_C)
-    mm = MediumMotor()
+    largeMotor_Left = LargeMotor(OUTPUT_B)
+    largeMotor_Right = LargeMotor(OUTPUT_C)
+    mediumMotor = MediumMotor()
     ts = TouchSensor()
     
     f = open("Program16_data.txt", "r")
