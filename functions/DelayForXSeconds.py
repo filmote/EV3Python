@@ -14,7 +14,7 @@ import constants
 def delayForXSeconds(debug, stop, delayLength):
 
     if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
-        print("Start delayForXSeconds({}), active number of threads {}, thread {}".format(delayLength, threading.activeCount(), threading.current_thread().ident), file=stderr)
+        print("Start delayForXSeconds({}), thread {}".format(delayLength, threading.current_thread().ident), file=stderr)
 
     start_time = time.time()
 

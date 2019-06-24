@@ -25,7 +25,7 @@ def driveForXRotations(debug, stop, rotations, speed):
     if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
         print("Start driveForXRotations({}, {}), active number of threads {}, thread {}".format(rotations, speed, threading.activeCount(), threading.current_thread().ident), file=stderr)
 
-    if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_CURRENT_POSITION:
+    if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_STARTING_POSITION_POSITION:
         print("> Starting position {}". format(rotationB), file = stderr)
 
     tank_pair.on(left_speed=speed, right_speed=speed)
@@ -36,13 +36,16 @@ def driveForXRotations(debug, stop, rotations, speed):
             print("> Current position {}". format(motorLeft.position), file = stderr)
 
         if stop():
+            if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_FINAL_POSITION:
+                print("> Final position {}". format(rotationB), file = stderr)
+
             if debug & constants.DEBUG and debug & constants.DEBUG_THREAD_LIFECYCLE:
                 print("Kill driveForXRotations({}, {}), thread {}.".format(rotations, speed, threading.current_thread().ident), file=stderr)
             break
 
     if not stop():
 
-        if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_CURRENT_POSITION:
+        if debug & constants.DEBUG and debug & constants.DEBUG_MOVEMENT_ROTATION_FINAL_POSITION:
             print("> Final position {}". format(rotationB), file = stderr)
             
         tank_pair.off()

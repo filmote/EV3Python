@@ -16,7 +16,7 @@ def returnWhenObjectWithinXcm(debug, stop, distance):
     ir = InfraredSensor(constants.INPUT_INFRARED_SENSOR) 
 
     if debug:
-        print("Start returnWhenObjectWithinXcm({}), active number of threads {}, thread {}".format(distance, threading.activeCount(), threading.current_thread().ident), file=stderr)
+        print("Start returnWhenObjectWithinXcm({}), thread {}".format(distance, threading.current_thread().ident), file=stderr)
 
     while True:
 
@@ -26,10 +26,10 @@ def returnWhenObjectWithinXcm(debug, stop, distance):
 
         if ir.proximity < distance * constants.IR_PROMIXITY_TO_CM_RATIO:
             if debug:
-                print("End returnWhenObjectWithinXcm({}).".format(distance, threading.current_thread().ident), file=stderr)
+                print("End returnWhenObjectWithinXcm({}), thread {}.".format(distance, threading.current_thread().ident), file=stderr)
             break
 
         if stop():
             if debug:
-                print("Kill returnWhenObjectWithinXcm({}).".format(distance, threading.current_thread().ident), file=stderr)
+                print("Kill returnWhenObjectWithinXcm({}), thread {}.".format(distance, threading.current_thread().ident), file=stderr)
             break
