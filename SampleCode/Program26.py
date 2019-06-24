@@ -1,21 +1,18 @@
 #!/usr/bin/env python3
+ham = 0b0001
+cheese = 0b0010
+tomato = 0b0100
+bread = 0b1000
 
-from sys import stderr
+mySandwich = ham + cheese + bread
 
-# simplest case
-print('EV3 Python')
-
-# with a single or multiple substitution
-print('EV3 {}'.format('Python'))
-print('{} {}'.format('EV3', 'Python'))
-
-# printing variables
-firstWord = 'EV3'
-secondWord = 'Python'
-print('{} {}'.format(firstWord, secondWord))
-
-# using the end="" parameter to print on a single line
-print('{} '.format(firstWord), end="")
-print('{}'.format(secondWord))
-
-# printing to the VSCode console
+print("Your sandwhich has ", end="")
+print(tomato)
+if mySandwich & ham:
+    print("ham ", end="")
+if mySandwich & cheese:
+    print("cheese ", end="")
+if mySandwich & tomato:
+    print("tomato ", end="")
+if mySandwich & bread:
+    print("bread ", end="")
