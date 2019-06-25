@@ -24,12 +24,12 @@ def createAction(name, motor, speed, seconds):
 
 def launchStep(action):
 
-    if action.get('name') == "onForSeconds":
+    if action.get('name') == 'onForSeconds':
         thread = threading.Thread(target = onForSeconds, args = (action.get('motor'), action.get('speed'), action.get('seconds')))
         thread.start()
         return thread
     
-    if action.get('name') == "delayForSeconds":
+    if action.get('name') == 'delayForSeconds':
         thread = threading.Thread(target = delayForSeconds, args = (action.get('seconds'), ))
         thread.start()
         return thread
@@ -45,10 +45,10 @@ def main():
     mediumMotor = MediumMotor()
     ts = TouchSensor()
     
-    action1 = createAction("onForSeconds", largeMotor_Left, 20, 4)
-    action2 = createAction("onForSeconds", largeMotor_Right, 40, 3)
-    action3 = createAction("delayForSeconds", None, None, 2)
-    action4 = createAction("onForSeconds", mediumMotor, 10, 8)
+    action1 = createAction('onForSeconds', largeMotor_Left, 20, 4)
+    action2 = createAction('onForSeconds', largeMotor_Right, 40, 3)
+    action3 = createAction('delayForSeconds', None, None, 2)
+    action4 = createAction('onForSeconds', mediumMotor, 10, 8)
     
     actionParallel = []
     actionParallel.append(action1)

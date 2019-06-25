@@ -43,7 +43,7 @@ def launchStep(stop, action):
     speed = float(action.get('speed'))
     seconds = float(action.get('seconds'))
 
-    if name == "onForSeconds":
+    if name == 'onForSeconds':
 
         if (motor == "largeMotor_Left"):
             motorToUse = largeMotor_Left
@@ -56,7 +56,7 @@ def launchStep(stop, action):
         thread.start()
         return thread
     
-    if name == "delayForSeconds":
+    if name == 'delayForSeconds':
         thread = threading.Thread(target = delayForSeconds, args = (stop, seconds))
         thread.start()
         return thread

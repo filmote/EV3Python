@@ -31,9 +31,9 @@ def main():
     largeMotor_Right = LargeMotor(OUTPUT_C)
     mediumMotor = MediumMotor()
     
-    action1 = createAction("onForSeconds", largeMotor_Left, 20, 4)
-    action2 = createAction("onForSeconds", largeMotor_Right, 40, 3)
-    action3 = createAction("onForSeconds", mediumMotor, 10, 8)
+    action1 = createAction('onForSeconds', largeMotor_Left, 20, 4)
+    action2 = createAction('onForSeconds', largeMotor_Right, 40, 3)
+    action3 = createAction('onForSeconds', mediumMotor, 10, 8)
     
     actionParallel = []
     actionParallel.append(action1)
@@ -48,7 +48,7 @@ def main():
         if isinstance(action, list):
     
             for subAction in action:
-                if subAction.get('name') == "onForSeconds":
+                if subAction.get('name') == 'onForSeconds':
                     thread = threading.Thread(target = onForSeconds, args = (subAction.get('motor'), subAction.get('speed'), subAction.get('seconds'))
                     threadPool.append(thread)
                     thread.start()
@@ -56,7 +56,7 @@ def main():
         # is there a single action to execute?
         else:
     
-            if action.get('name') == "onForSeconds":
+            if action.get('name') == 'onForSeconds':
                 thread = threading.Thread(target = onForSeconds, args = (action.get('motor'), action.get('speed'), action.get('seconds'))
                 threadPool.append(thread)
                 thread.start()
