@@ -6,7 +6,6 @@ from time import sleep
 
 import threading
 import time
-import types
 
 def onForSeconds(stop, motor, speed, seconds):
 
@@ -32,23 +31,23 @@ def delayForSeconds(stop, seconds):
 
 def createAction(name, motor, speed, seconds):
 
-    action = types.SimpleNamespace()
-    action.name = name
-    action.motor = motor
-    action.speed = speed
-    action.seconds = seconds
+    action = {}
+    action['name'] = name
+    action['motor'] = motor
+    action['speed'] = speed
+    action['seconds'] = seconds
 
     return action
 
 def launchStep(stop, action):
 
-    if action.name == "onForSeconds":
-        thread = threading.Thread(target = onForSeconds, args = (stop, action.motor, action.speed, action.seconds))
+    if action.get('name') == 'onForSeconds':
+        thread = threading.Thread(target = onForSeconds, args = (stop, action.get('motor'), action.get('speed'), action.get('seconds')))
         thread.start()
         return thread
     
-    if action.name == "delayForSeconds":
-        thread = threading.Thread(target = delayForSeconds, args = (stop, action.seconds))
+    if action.get('name') == 'delayForSeconds':
+        thread = threading.Thread(target = delayForSeconds, args = (stop, action.get('seconds')))
         thread.start()
         return thread
 
@@ -63,10 +62,10 @@ def main():
     mediumMotor = MediumMotor()
     ts = TouchSensor()
     
-    action1 = createAction("onForSeconds", largeMotor_Left, 20, 4)
-    action2 = createAction("onForSeconds", largeMotor_Right, 40, 3)
-    action3 = createAction("delayForSeconds", None, None, 2)
-    action4 = createAction("onForSeconds", mediumMotor, 10, 8)
+    action1 = createAction('onForSeconds', largeMotor_Left, 20, 4)
+    action2 = createAction('onForSeconds', largeMotor_Right, 40, 3)
+    action3 = createAction('delayForSeconds', None, None, 2)
+    action4 = createAction('onForSeconds', mediumMotor, 10, 8)
     
     actionParallel = []
     actionParallel.append(action1)

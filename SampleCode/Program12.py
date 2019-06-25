@@ -4,7 +4,7 @@ from ev3dev2.motor import MediumMotor, LargeMotor, OUTPUT_B, OUTPUT_C
 from time import sleep
 
 import threading
-import types
+
 
 def waitUntilAllThreadsComplete(threadPool): 
     while threadPool:
@@ -20,23 +20,23 @@ def delayForSeconds(seconds):
 
 def createAction(name, motor, speed, seconds):
 
-    action = types.SimpleNamespace()
-    action.name = name
-    action.motor = motor
-    action.speed = speed
-    action.seconds = seconds
+    action = {}
+    action['name'] = name
+    action['motor'] = motor
+    action['speed'] = speed
+    action['seconds'] = seconds
 
     return action
 
 def launchStep(action):
 
-    if action.name == "onForSeconds":
-        thread = threading.Thread(target = onForSeconds, args = (action.motor, action.speed, action.seconds))
+    if action.get('name') == "onForSeconds":
+        thread = threading.Thread(target = onForSeconds, args = (action.get('motor'), action.get('speed'), action.get('seconds')))
         thread.start()
         return thread
     
-    if action.name == "delayForSeconds":
-        thread = threading.Thread(target = delayForSeconds, args = (action.seconds, ))
+    if action.get('name') == "delayForSeconds":
+        thread = threading.Thread(target = delayForSeconds, args = (action.get('seconds'), ))
         thread.start()
         return thread
 

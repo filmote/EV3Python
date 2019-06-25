@@ -7,7 +7,7 @@ from time import sleep
 import xml.etree.ElementTree as ET
 import threading
 import time
-import types
+
 
 def onForSeconds(stop, motor, speed, seconds):
 
@@ -22,7 +22,6 @@ def onForSeconds(stop, motor, speed, seconds):
 
     motor.off()
 
-
 def delayForSeconds(stop, seconds):
 
     start_time = time.time()
@@ -31,7 +30,6 @@ def delayForSeconds(stop, seconds):
 
         if stop():
             break
-
 
 def launchStep(stop, action):
     
@@ -66,7 +64,6 @@ def launchStep(stop, action):
 def main():
     
     threadPool = []
-    actions = []
     stopProcessing = False
    
     ts = TouchSensor()

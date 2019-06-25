@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from ev3dev2.motor import MediumMotor, LargeMotor, OUTPUT_B, OUTPUT_C
-import types
 import threading
 
 def waitUntilAllThreadsComplete(threadPool): 
@@ -15,11 +14,11 @@ def onForSeconds(motor, speed, seconds):
 
 def createAction(name, motor, speed, seconds):
 
-    action = types.SimpleNamespace()
-    action.name = name
-    action.motor = motor
-    action.speed = speed
-    action.seconds = seconds
+    action = {}
+    action['name'] = name
+    action['motor'] = motor
+    action['speed'] = speed
+    action['seconds'] = seconds
 
     return action
 
@@ -49,16 +48,16 @@ def main():
         if isinstance(action, list):
     
             for subAction in action:
-                if subAction.name == "onForSeconds":
-                    thread = threading.Thread(target = onForSeconds, args = (subAction.motor, subAction.speed, subAction.seconds))
+                if subAction.get('name') == "onForSeconds":
+                    thread = threading.Thread(target = onForSeconds, args = (subAction.get('motor'), subAction.get('speed'), subAction.get('seconds'))
                     threadPool.append(thread)
                     thread.start()
     
         # is there a single action to execute?
         else:
     
-            if action.name == "onForSeconds":
-                thread = threading.Thread(target = onForSeconds, args = (action.motor, action.speed, action.seconds))
+            if action.get('name') == "onForSeconds":
+                thread = threading.Thread(target = onForSeconds, args = (action.get('motor'), action.get('speed'), action.get('seconds'))
                 threadPool.append(thread)
                 thread.start()
 

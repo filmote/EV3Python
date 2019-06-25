@@ -7,7 +7,6 @@ import xml.etree.ElementTree as ET
 
 import threading
 import time
-import types
 
 def onForSeconds(stop, motor, speed, seconds):
 

@@ -142,9 +142,6 @@ def launchSteps(debug, stop, actions, inParallel = True):
     threadPool = []
     stepCount = 0
 
-    stop_threads = False
-    
-
     # Launch the process(es) for this step.  If the step contains sub-steps, then
     # we handle these differently to a single step ..
 
@@ -182,7 +179,7 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
         for thread in threadPool:
             if not thread.isAlive():
-                threadPool.remove(worker)
+                threadPool.remove(thread)
 
 
         # If there are no more active threads then check to see if we are done ..
@@ -216,7 +213,7 @@ def launchSteps(debug, stop, actions, inParallel = True):
 
 def main():
 
-    cl = ColorSensor()
+    colourSensorAttachments = ColorSensor(constants.INPUT_COLOUR_SENSOR_ATTACHMENTS)
 
     leds = Leds()
     leds.all_off()
@@ -239,7 +236,7 @@ def main():
     
     while True:
 
-        rgb = cl.raw
+        rgb = colourSensorAttachments.raw
 
         for program in programs:
 

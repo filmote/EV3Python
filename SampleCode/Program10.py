@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 
 from ev3dev2.motor import MediumMotor, LargeMotor, OUTPUT_B, OUTPUT_C
-import types
 
 def onForSeconds(motor, speed, seconds):
     motor.on_for_seconds(speed, seconds, brake = True, block = True)
 
 def createAction(name, motor, speed, seconds):
 
-    action = types.SimpleNamespace()
-    action.name = name
-    action.motor = motor
-    action.speed = speed
-    action.seconds = seconds
+    action = {}
+    action['name'] = name
+    action['motor'] = motor
+    action['speed'] = speed
+    action['seconds'] = seconds
 
     return action
 
@@ -41,14 +40,14 @@ def main():
         if isinstance(action, list):
     
             for subAction in action:
-                if subAction.name == "onForSeconds":
-                    onForSeconds(subAction.motor, subAction.speed, subAction.seconds)
+                if subAction.get('name') == "onForSeconds":
+                    onForSeconds(subAction.get('motor'), subAction.get('speed'), subAction.get('seconds')
     
         # is there a single action to execute?
         else:
     
-            if action.name == "onForSeconds":
-                onForSeconds(action.motor, action.speed, action.seconds)
+            if action.get('name') == "onForSeconds":
+                onForSeconds(action.get('motor'), action.get('speed'), action.get('seconds')
 
 
 if __name__ == '__main__':

@@ -24,7 +24,6 @@ COLOUR_TOLERANCE                            = 20
 LIFTED_MINIMUM_THRESHOLD                    = 10
 
 
-
 # Robot
 
 ROBOT_LIFTED_USE_TOUCH_SENSOR               = 0

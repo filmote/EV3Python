@@ -6,7 +6,6 @@ from time import sleep
 
 import threading
 import time
-import types
 
 def onForSeconds(stop, motor, speed, seconds):
 
@@ -45,8 +44,8 @@ def createAction(name, motor, speed, seconds):
         action.motor = largeMotor_Left
     if (motor == "largeMotor_Right"):
         action.motor = largeMotor_Right
-    if (motor == "mm"):
-        action.motor = mm
+    if (motor == "mediumMotor"):
+        action.motor = mediumMotor
 
     return action
 

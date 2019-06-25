@@ -7,7 +7,7 @@ bread = 0b1000
 mySandwich = ham + cheese + bread
 
 print("Your sandwhich has ", end="")
-print(tomato)
+
 if mySandwich & ham:
     print("ham ", end="")
 if mySandwich & cheese:

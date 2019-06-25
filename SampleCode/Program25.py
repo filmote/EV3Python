@@ -7,7 +7,6 @@ from time import sleep
 import xml.etree.ElementTree as ET
 import threading
 import time
-import types
 
 COLOUR_SENSOR_MAT = INPUT_3
 COLOUR_SENSOR_ATTACHMENTS = INPUT_3
