@@ -297,5 +297,4 @@ def main():
     if debug:
         print('Finished.', file = stderr)
     
-if __name__ == '__main__':
-    main()
+main()
