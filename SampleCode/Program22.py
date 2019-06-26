@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ''' 
 --------------------------------------------------------------------------------
 
@@ -30,7 +31,6 @@ either expressed or implied, of the FLL Robot Framework project.
 
 --------------------------------------------------------------------------------
 '''
-#!/usr/bin/env python3
 
 import xml.etree.ElementTree as ET
 

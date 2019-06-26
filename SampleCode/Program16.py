@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ''' 
 --------------------------------------------------------------------------------
 
@@ -30,9 +31,9 @@ either expressed or implied, of the FLL Robot Framework project.
 
 --------------------------------------------------------------------------------
 '''
-#!/usr/bin/env python3
 
 from time import sleep
+from sys import stderr
 
 f = open("Program16_data.txt", "r")
 
@@ -47,7 +48,7 @@ for aLineOfText in f:
     speed = float(tokens[2])
     seconds = float(tokens[3])    
 
-    print( "name = {}, motor = {}, speed = {}, seconds = {}".format(name, motor, speed, seconds) )
+    print("name = {}, motor = {}, speed = {}, seconds={}".format(name, motor, speed, seconds), file=stderr)
 
 f.close()
 sleep(5)

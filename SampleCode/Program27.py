@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ''' 
 --------------------------------------------------------------------------------
 
@@ -30,7 +31,8 @@ either expressed or implied, of the FLL Robot Framework project.
 
 --------------------------------------------------------------------------------
 '''
-#!/usr/bin/env python3
+
+from sys import stderr
 
 def createAction(name, motor, speed, seconds):
 
@@ -55,6 +57,6 @@ def createAction(name, motor, speed, seconds):
 
 def main():
     action = createAction('sdfsd', 34, 56, 'dd')
-    print(action)
+    print(action, file=stderr)
 
 main()

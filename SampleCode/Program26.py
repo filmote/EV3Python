@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ''' 
 --------------------------------------------------------------------------------
 
@@ -30,7 +31,8 @@ either expressed or implied, of the FLL Robot Framework project.
 
 --------------------------------------------------------------------------------
 '''
-#!/usr/bin/env python3
+
+from sys import stderr
 
 ham = 0b0001
 cheese = 0b0010
@@ -39,13 +41,15 @@ bread = 0b1000
 
 mySandwich = ham + cheese + bread
 
-print("Your sandwhich has ", end="")
+print("Your sandwhich has ", file=stderr, end="")
 
 if mySandwich & ham:
-    print("ham ", end="")
+    print("ham ", file=stderr, end="")
 if mySandwich & cheese:
-    print("cheese ", end="")
+    print("cheese ", file=stderr, end="")
 if mySandwich & tomato:
-    print("tomato ", end="")
+    print("tomato ", file=stderr, end="")
 if mySandwich & bread:
-    print("bread ", end="")
+    print("bread ", file=stderr, end="")
+
+print("", file=stderr)

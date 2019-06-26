@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ''' 
 --------------------------------------------------------------------------------
 
@@ -30,13 +31,13 @@ either expressed or implied, of the FLL Robot Framework project.
 
 --------------------------------------------------------------------------------
 '''
-#!/usr/bin/env python3
 
 from time import sleep
+from sys import stderr
 
 def printNumber(n):
 
-    print("{}, ".format(n), end="")
+    print("{}, ".format(n), file=stderr, end="")
 
     if n < 10:
         printNumber(n + 1)

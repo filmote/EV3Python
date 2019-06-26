@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ''' 
 --------------------------------------------------------------------------------
 
@@ -30,13 +31,11 @@ either expressed or implied, of the FLL Robot Framework project.
 
 --------------------------------------------------------------------------------
 '''
-#!/usr/bin/env python3
 
 import xml.etree.ElementTree as ET
 
 from ev3dev2.sensor.lego import ColorSensor
 from sys import stderr
-
 
 def main():
     
@@ -73,7 +72,7 @@ def main():
 
                 for step in steps:
 
-                    print(step.get('name'))
+                    print(step.get('name'), file=stderr)
 
     
 main()

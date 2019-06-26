@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ''' 
 --------------------------------------------------------------------------------
 
@@ -30,10 +31,10 @@ either expressed or implied, of the FLL Robot Framework project.
 
 --------------------------------------------------------------------------------
 '''
-#!/usr/bin/env python3
 
 import xml.etree.ElementTree as ET
 from time import sleep
+from sys import stderr
 
 def printAction(step):
 
@@ -42,10 +43,10 @@ def printAction(step):
     speed = float(step.get('speed'))
     seconds = float(step.get('seconds'))
 
-    print("action = {}".format(action), end="" )
-    print(", motor = {}".format(motor), end="" )
-    print(", speed = {}".format(speed), end="" )
-    print(", seconds = {}".format(seconds) )
+    print("action = {}".format(action), end="", file=stderr)
+    print(", motor = {}".format(motor), end="", file=stderr )
+    print(", speed = {}".format(speed), end="", file=stderr )
+    print(", seconds={}".format(seconds), file=stderr )
 
 
 def loopThroughXML(steps):
@@ -58,7 +59,7 @@ def loopThroughXML(steps):
             loopThroughXML(step)
 
         else:
-            printAction(step)
+            printAction(step, file=stderr)
 
 def main():
 

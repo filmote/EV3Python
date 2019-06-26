@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ''' 
 --------------------------------------------------------------------------------
 
@@ -30,7 +31,6 @@ either expressed or implied, of the FLL Robot Framework project.
 
 --------------------------------------------------------------------------------
 '''
-#!/usr/bin/env python3
 
 from ev3dev2.motor import MediumMotor, LargeMotor, OUTPUT_B, OUTPUT_C
 from ev3dev2.sensor.lego import TouchSensor, ColorSensor, INPUT_1, INPUT_2, INPUT_3, INPUT_4
